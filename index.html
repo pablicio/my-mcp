@@ -1,0 +1,1082 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Server - Configuracao e Documentacao</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --color-background: #fcfcf9;
+            --color-surface: #fffffd;
+            --color-text: #134c3b;
+            --color-text-secondary: #626c71;
+            --color-primary: #21808d;
+            --color-primary-hover: #1d7480;
+            --color-success: #21808d;
+            --color-warning: #a84b2f;
+            --color-error: #c0152f;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-card-border: rgba(94, 82, 64, 0.12);
+            --color-secondary: rgba(94, 82, 64, 0.12);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-family-mono: 'Monaco', 'Menlo', monospace;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+            --radius-sm: 6px;
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.06);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-background: #1f2121;
+                --color-surface: #262828;
+                --color-text: #f5f5f5;
+                --color-text-secondary: rgba(167, 169, 169, 0.7);
+                --color-primary: #32b8c6;
+                --color-primary-hover: #2da6b2;
+                --color-success: #32b8c6;
+                --color-warning: #e68161;
+                --color-error: #ff5459;
+                --color-border: rgba(119, 124, 124, 0.3);
+                --color-card-border: rgba(119, 124, 124, 0.2);
+                --color-secondary: rgba(119, 124, 124, 0.15);
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: var(--font-family);
+            background: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.5;
+        }
+
+        h1, h2, h3, h4 {
+            margin: 0 0 var(--space-16) 0;
+            color: var(--color-text);
+        }
+
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.25rem; }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--color-surface);
+            border-right: 1px solid var(--color-border);
+            padding: var(--space-24);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main {
+            flex: 1;
+            margin-left: 280px;
+            padding: var(--space-24);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-12) var(--space-16);
+            margin: 4px 0;
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--color-secondary);
+            color: var(--color-text);
+        }
+
+        .nav-item.active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            margin-right: var(--space-12);
+        }
+
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-20);
+            margin-bottom: var(--space-16);
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-16);
+        }
+
+        .grid-small {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-16);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-8) var(--space-16);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--color-secondary);
+            color: var(--color-text);
+        }
+
+        .btn-sm {
+            padding: 4px var(--space-12);
+            font-size: 0.875rem;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-16);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-8);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: var(--space-8) var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            background: var(--color-surface);
+            color: var(--color-text);
+        }
+
+        .form-control:focus {
+            outline: 2px solid var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px var(--space-12);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(33, 128, 141, 0.15);
+            color: var(--color-success);
+        }
+
+        .status-warning {
+            background: rgba(168, 75, 47, 0.15);
+            color: var(--color-warning);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-12);
+        }
+
+        .module-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-8);
+            margin-top: var(--space-12);
+        }
+
+        .tool-tag {
+            padding: 4px var(--space-8);
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+
+        .code-block {
+            position: relative;
+            margin: var(--space-16) 0;
+        }
+
+        .code-block pre {
+            background: #2d3748 !important;
+            color: #f7fafc !important;
+            border-radius: var(--radius-base);
+            overflow-x: auto;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            padding: var(--space-16);
+            font-family: var(--font-family-mono);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: var(--space-8);
+            right: var(--space-8);
+            padding: 4px var(--space-8);
+            background: var(--color-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--color-text);
+        }
+
+        .step-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-20);
+            margin-bottom: var(--space-16);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            margin-right: var(--space-12);
+        }
+
+        .troubleshoot-item {
+            background: rgba(245, 158, 11, 0.08);
+            padding: var(--space-16);
+            border-radius: var(--radius-base);
+            margin-bottom: var(--space-12);
+        }
+
+        .troubleshoot-issue {
+            font-weight: 500;
+            color: var(--color-warning);
+            margin-bottom: var(--space-8);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: var(--space-16);
+            right: var(--space-16);
+            padding: var(--space-8);
+            background: var(--color-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            color: var(--color-text);
+        }
+
+        .log-output {
+            background: #2d3748;
+            color: #f7fafc;
+            padding: var(--space-16);
+            border-radius: var(--radius-base);
+            height: 300px;
+            overflow-y: auto;
+            font-family: var(--font-family-mono);
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .generated-config {
+            background: rgba(34, 197, 94, 0.08);
+            padding: var(--space-16);
+            border-radius: var(--radius-base);
+            margin-top: var(--space-16);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .hidden { display: none; }
+
+        .flex { display: flex; }
+        .flex-between { justify-content: space-between; }
+        .flex-center { align-items: center; }
+        .mb-16 { margin-bottom: var(--space-16); }
+        .mb-24 { margin-bottom: var(--space-24); }
+        .mb-32 { margin-bottom: var(--space-32); }
+        .mt-12 { margin-top: var(--space-12); }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 1000;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: var(--space-16);
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                position: fixed;
+                top: var(--space-16);
+                left: var(--space-16);
+                z-index: 1001;
+                background: var(--color-primary);
+                color: white;
+                border: none;
+                padding: var(--space-8);
+                border-radius: var(--radius-base);
+                cursor: pointer;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-menu-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+
+    <button class="theme-toggle" id="themeToggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </button>
+
+    <div class="app">
+        <nav class="sidebar" id="sidebar">
+            <div class="mb-24">
+                <h2 style="color: var(--color-primary); margin-bottom: 8px;">MCP Server</h2>
+                <p style="color: var(--color-text-secondary); font-size: 0.875rem;">Configuracao &amp; Documentacao</p>
+            </div>
+
+            <div class="nav-item active" data-section="dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </div>
+
+            <div class="nav-item" data-section="config">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6m6-12h-6m-6 0h6"></path>
+                </svg>
+                Configuracao
+            </div>
+
+            <div class="nav-item" data-section="docs">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                    <polyline points="14,2 14,8 20,8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                Documentacao
+            </div>
+
+            <div class="nav-item" data-section="extensions">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                Extensibilidade
+            </div>
+
+            <div class="nav-item" data-section="logs">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                    <polyline points="14,2 14,8 20,8"></polyline>
+                    <line x1="10" y1="12" x2="8" y2="12"></line>
+                    <line x1="16" y1="12" x2="14" y2="12"></line>
+                </svg>
+                Logs &amp; Debug
+            </div>
+        </nav>
+
+        <main class="main">
+            <section id="dashboard" class="section active">
+                <div class="mb-32">
+                    <h1>Dashboard do Servidor MCP</h1>
+                    <p style="color: var(--color-text-secondary); font-size: 1.125rem;">Visao geral dos modulos e status do servidor</p>
+                </div>
+
+                <div class="grid mb-32">
+                    <div class="card">
+                        <h3 style="color: var(--color-success); margin-bottom: 8px;">Status do Servidor</h3>
+                        <div class="status status-success">✓ Ativo</div>
+                        <p class="mt-12" style="color: var(--color-text-secondary);">Servidor rodando na porta 3000</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="color: var(--color-primary); margin-bottom: 8px;">Modulos Ativos</h3>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--color-primary); margin-bottom: 8px;">2/4</div>
+                        <p style="color: var(--color-text-secondary);">Google Calendar • File System</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="color: var(--color-warning); margin-bottom: 8px;">Ferramentas Disponiveis</h3>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--color-primary); margin-bottom: 8px;">9</div>
+                        <p style="color: var(--color-text-secondary);">Total de ferramentas ativas</p>
+                    </div>
+                </div>
+
+                <h2 class="mb-16">Modulos Disponiveis</h2>
+                <div id="modulesList"></div>
+            </section>
+
+            <section id="config" class="section">
+                <div class="mb-32">
+                    <h1>Configuracao do Servidor</h1>
+                    <p style="color: var(--color-text-secondary); font-size: 1.125rem;">Configure suas credenciais e integracoes</p>
+                </div>
+
+                <div class="card">
+                    <form>
+                        <h3>Google Calendar</h3>
+                        <div class="form-group">
+                            <label class="form-label">Client ID</label>
+                            <input type="text" class="form-control" id="googleClientId" placeholder="Seu Google Client ID">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Client Secret</label>
+                            <input type="password" class="form-control" id="googleClientSecret" placeholder="Seu Google Client Secret">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Redirect URI</label>
+                            <input type="text" class="form-control" id="googleRedirectUri" value="http://localhost:3000/auth/callback" readonly>
+                        </div>
+
+                        <h3 style="margin-top: var(--space-32);">Sistema de Arquivos</h3>
+                        <div class="form-group">
+                            <label class="form-label">Diretorios Permitidos (um por linha)</label>
+                            <textarea class="form-control" id="allowedPaths" rows="4" placeholder="/home/usuario/Documentos
+/home/usuario/Desktop
+/home/usuario/Projetos"></textarea>
+                        </div>
+
+                        <h3 style="margin-top: var(--space-32);">Configuracoes Gerais</h3>
+                        <div class="grid">
+                            <div class="form-group">
+                                <label class="form-label">Porta do Servidor</label>
+                                <input type="number" class="form-control" id="serverPort" value="3000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Log Level</label>
+                                <select class="form-control" id="logLevel">
+                                    <option value="debug">Debug</option>
+                                    <option value="info" selected>Info</option>
+                                    <option value="warn">Warning</option>
+                                    <option value="error">Error</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn" id="generateConfig">Gerar Configuracao</button>
+                    </form>
+                </div>
+
+                <div class="generated-config hidden" id="generatedConfig">
+                    <h3 class="mb-16">Configuracao para Claude Desktop</h3>
+                    <p class="mb-16" style="color: var(--color-text-secondary);">Adicione esta configuracao ao seu <code>claude_desktop_config.json</code>:</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyConfig()">Copiar</button>
+                        <pre><code id="configOutput"></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="docs" class="section">
+                <div class="mb-32">
+                    <h1>Documentacao</h1>
+                    <p style="color: var(--color-text-secondary); font-size: 1.125rem;">Guia completo de instalacao e uso</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="flex flex-center mb-16">
+                        <div class="step-number">1</div>
+                        <h3>Instalar Dependencias</h3>
+                    </div>
+                    <p class="mb-16">Instale todas as dependencias Python necessarias:</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <pre><code class="language-bash">pip install -r requirements.txt</code></pre>
+                    </div>
+                    <p style="color: var(--color-text-secondary); font-size: 0.875rem;">Certifique-se de ter Python 3.8+ instalado</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="flex flex-center mb-16">
+                        <div class="step-number">2</div>
+                        <h3>Configurar Credenciais</h3>
+                    </div>
+                    <p class="mb-16">Configure suas credenciais do Google Calendar:</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <pre><code class="language-bash"># Criar arquivo .env na raiz do projeto
+GOOGLE_CLIENT_ID=seu_client_id_aqui
+GOOGLE_CLIENT_SECRET=seu_client_secret_aqui
+ALLOWED_PATHS=/home/usuario/Documentos,/home/usuario/Desktop</code></pre>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <div class="flex flex-center mb-16">
+                        <div class="step-number">3</div>
+                        <h3>Iniciar o Servidor</h3>
+                    </div>
+                    <p class="mb-16">Execute o servidor MCP:</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <pre><code class="language-bash">python main.py</code></pre>
+                    </div>
+                    <p style="color: var(--color-text-secondary); font-size: 0.875rem;">O servidor iniciara na porta 3000 por padrao</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="flex flex-center mb-16">
+                        <div class="step-number">4</div>
+                        <h3>Configurar Claude Desktop</h3>
+                    </div>
+                    <p class="mb-16">Adicione a configuracao ao Claude Desktop:</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <pre><code class="language-json">{
+  "mcpServers": {
+    "personal-mcp-server": {
+      "command": "python",
+      "args": ["/caminho/para/seu/main.py"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "seu_client_id",
+        "GOOGLE_CLIENT_SECRET": "seu_client_secret",
+        "ALLOWED_PATHS": "/home/usuario/Documentos,/home/usuario/Desktop"
+      }
+    }
+  }
+}</code></pre>
+                    </div>
+                </div>
+
+                <h2 class="mb-16" style="margin-top: var(--space-32);">Ferramentas Disponiveis</h2>
+                <div id="toolsDocumentation"></div>
+            </section>
+
+            <section id="extensions" class="section">
+                <div class="mb-32">
+                    <h1>Sistema de Extensibilidade</h1>
+                    <p style="color: var(--color-text-secondary); font-size: 1.125rem;">Como criar e adicionar novos modulos ao servidor</p>
+                </div>
+
+                <div class="card mb-24">
+                    <h3 class="mb-16">Template Basico de Modulo</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <pre><code class="language-python">import asyncio
+from mcp import mcp
+from typing import Optional
+
+@mcp.tool()
+async def minha_ferramenta(
+    parametro1: str,
+    parametro2: Optional[str] = None
+) -> str:
+    """Descricao da sua ferramenta.
+    
+    Args:
+        parametro1: Descricao do primeiro parametro
+        parametro2: Descricao do segundo parametro (opcional)
+    
+    Returns:
+        Resultado da operacao
+    
+    Raises:
+        ValueError: Quando os parametros sao invalidos
+    """
+    try:
+        # Sua logica aqui
+        resultado = f"Processando {parametro1}"
+        if parametro2:
+            resultado += f" com {parametro2}"
+        
+        return resultado
+    except Exception as e:
+        raise ValueError(f"Erro ao processar: {str(e)}")</code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-24">
+                    <h3 class="mb-16">Guia de Estilo de Codigo</h3>
+                    <div class="grid">
+                        <div>
+                            <h4 style="color: var(--color-primary); margin-bottom: 12px;">Convencoes de Nomenclatura</h4>
+                            <ul style="list-style-type: disc; padding-left: 20px;">
+                                <li>Use snake_case para funcoes e variaveis</li>
+                                <li>Use PascalCase para classes</li>
+                                <li>Prefixe metodos privados com underscore</li>
+                                <li>Use nomes descritivos e claros</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--color-primary); margin-bottom: 12px;">Documentacao</h4>
+                            <ul style="list-style-type: disc; padding-left: 20px;">
+                                <li>Todas as funcoes devem ter docstrings</li>
+                                <li>Use type hints em todos os parametros</li>
+                                <li>Documente excecoes que podem ser levantadas</li>
+                                <li>Inclua exemplos de uso quando necessario</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="mb-16">Como Adicionar um Novo Modulo</h3>
+                    <ol style="list-style-type: decimal; padding-left: 20px;">
+                        <li style="margin-bottom: 8px;">Crie um novo arquivo Python na pasta <code>modules/</code></li>
+                        <li style="margin-bottom: 8px;">Implemente suas ferramentas usando o decorador <code>@mcp.tool()</code></li>
+                        <li style="margin-bottom: 8px;">Adicione tratamento de erros apropriado</li>
+                        <li style="margin-bottom: 8px;">Documente todas as funcoes com docstrings</li>
+                        <li style="margin-bottom: 8px;">Importe o modulo no arquivo <code>main.py</code></li>
+                        <li style="margin-bottom: 8px;">Teste o modulo antes de usar em producao</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section id="logs" class="section">
+                <div class="mb-32">
+                    <h1>Logs &amp; Debug</h1>
+                    <p style="color: var(--color-text-secondary); font-size: 1.125rem;">Monitoramento e solucao de problemas</p>
+                </div>
+
+                <div class="card mb-24">
+                    <div class="flex flex-between flex-center mb-16">
+                        <h3>Logs em Tempo Real</h3>
+                        <button class="btn btn-sm btn-secondary" onclick="clearLogs()">Limpar Logs</button>
+                    </div>
+                    <div id="logOutput" class="log-output">
+                        <div style="color: var(--color-success);">2024-01-15 10:30:15 - INFO - MCP Server iniciado na porta 3000</div>
+                        <div style="color: var(--color-primary);">2024-01-15 10:30:16 - INFO - Modulo Google Calendar carregado</div>
+                        <div style="color: var(--color-primary);">2024-01-15 10:30:17 - INFO - Modulo File System carregado</div>
+                        <div style="color: var(--color-success);">2024-01-15 10:30:18 - INFO - Servidor pronto para conexoes</div>
+                        <div style="color: var(--color-warning);">2024-01-15 10:35:22 - WARN - Tentativa de acesso a arquivo fora do diretorio permitido</div>
+                        <div style="color: var(--color-success);">2024-01-15 10:40:33 - INFO - Evento criado no Google Calendar: "Reuniao com cliente"</div>
+                    </div>
+                </div>
+
+                <div class="card mb-24">
+                    <h3 class="mb-16">Status das Conexoes</h3>
+                    <div class="grid-small">
+                        <div style="padding: 12px; background: rgba(34, 197, 94, 0.08); border-radius: 8px;">
+                            <div style="font-weight: 500;">Google Calendar API</div>
+                            <div class="status status-success" style="margin-top: 8px;">✓ Conectado</div>
+                        </div>
+                        <div style="padding: 12px; background: rgba(59, 130, 246, 0.08); border-radius: 8px;">
+                            <div style="font-weight: 500;">File System Access</div>
+                            <div class="status status-success" style="margin-top: 8px;">✓ Ativo</div>
+                        </div>
+                        <div style="padding: 12px; background: rgba(239, 68, 68, 0.08); border-radius: 8px;">
+                            <div style="font-weight: 500;">Task Manager</div>
+                            <div class="status status-warning" style="margin-top: 8px;">⚠ Planejado</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="mb-16">Solucao de Problemas</h3>
+                    <div id="troubleshootingList"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        // Application data
+        const appData = {
+            modules: [
+                {
+                    name: "Google Calendar",
+                    description: "Integracao com Google Calendar para gerenciar eventos",
+                    status: "available",
+                    tools: ["create_event", "list_events", "update_event", "delete_event", "search_events"]
+                },
+                {
+                    name: "File System",
+                    description: "Acesso seguro ao sistema de arquivos local",
+                    status: "available",
+                    tools: ["read_file", "write_file", "list_directory", "search_files", "delete_file"]
+                },
+                {
+                    name: "Tasks/Notes",
+                    description: "Sistema simples de tarefas e notas",
+                    status: "planned",
+                    tools: ["create_task", "list_tasks", "complete_task"]
+                },
+                {
+                    name: "Web Scraping",
+                    description: "Extracao de dados de websites",
+                    status: "planned",
+                    tools: ["scrape_url", "extract_content"]
+                }
+            ],
+            troubleshooting: [
+                {
+                    issue: "Servidor nao conecta",
+                    solution: "Verifique se a porta esta livre e as credenciais estao corretas"
+                },
+                {
+                    issue: "Claude nao reconhece ferramentas",
+                    solution: "Reinicie o Claude Desktop apos alterar a configuracao"
+                },
+                {
+                    issue: "Erro de permissao de arquivo",
+                    solution: "Verifique se o diretorio esta na lista de paths permitidos"
+                }
+            ]
+        };
+
+        // Navigation functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.section');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetSection = item.dataset.section;
+                
+                // Update navigation
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Update sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(targetSection).classList.add('active');
+
+                // Close mobile menu if open
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        let isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        themeToggle.addEventListener('click', () => {
+            isDark = !isDark;
+            document.documentElement.setAttribute('data-color-scheme', isDark ? 'dark' : 'light');
+            
+            // Update theme toggle icon
+            const icon = isDark ? 
+                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>' :
+                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+            themeToggle.innerHTML = icon;
+        });
+
+        // Load modules in dashboard
+        function loadModules() {
+            const modulesList = document.getElementById('modulesList');
+            modulesList.innerHTML = '';
+
+            appData.modules.forEach(module => {
+                const statusClass = module.status === 'available' ? 'status-success' : 'status-warning';
+                const statusText = module.status === 'available' ? '✓ Disponivel' : '⏳ Planejado';
+                
+                const moduleCard = document.createElement('div');
+                moduleCard.className = 'card';
+                moduleCard.innerHTML = `
+                    <div class="module-header">
+                        <h3 style="margin: 0;">${module.name}</h3>
+                        <div class="status ${statusClass}">${statusText}</div>
+                    </div>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 12px;">${module.description}</p>
+                    <div class="module-tools">
+                        ${module.tools.map(tool => `<span class="tool-tag">${tool}</span>`).join('')}
+                    </div>
+                `;
+                modulesList.appendChild(moduleCard);
+            });
+        }
+
+        // Load tools documentation
+        function loadToolsDocumentation() {
+            const toolsDoc = document.getElementById('toolsDocumentation');
+            toolsDoc.innerHTML = '';
+
+            appData.modules.filter(m => m.status === 'available').forEach(module => {
+                const moduleDoc = document.createElement('div');
+                moduleDoc.className = 'card';
+                moduleDoc.style.marginBottom = '16px';
+                
+                const toolsList = module.tools.map(tool => {
+                    return `<li><code>${tool}</code> - ${getToolDescription(tool)}</li>`;
+                }).join('');
+                
+                moduleDoc.innerHTML = `
+                    <h3 style="margin-bottom: 12px;">${module.name}</h3>
+                    <p style="margin-bottom: 16px; color: var(--color-text-secondary);">${module.description}</p>
+                    <h4 style="margin-bottom: 8px;">Ferramentas Disponiveis:</h4>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        ${toolsList}
+                    </ul>
+                `;
+                toolsDoc.appendChild(moduleDoc);
+            });
+        }
+
+        // Helper function to get tool descriptions
+        function getToolDescription(toolName) {
+            const descriptions = {
+                'create_event': 'Criar um novo evento no calendario',
+                'list_events': 'Listar eventos existentes',
+                'update_event': 'Atualizar um evento existente',
+                'delete_event': 'Remover um evento do calendario',
+                'search_events': 'Buscar eventos especificos',
+                'read_file': 'Ler conteudo de um arquivo',
+                'write_file': 'Escrever conteudo em um arquivo',
+                'list_directory': 'Listar arquivos de um diretorio',
+                'search_files': 'Buscar arquivos por nome ou conteudo',
+                'delete_file': 'Remover um arquivo do sistema',
+                'create_task': 'Criar uma nova tarefa',
+                'list_tasks': 'Listar tarefas existentes',
+                'complete_task': 'Marcar uma tarefa como concluida'
+            };
+            return descriptions[toolName] || 'Descricao nao disponivel';
+        }
+
+        // Load troubleshooting list
+        function loadTroubleshooting() {
+            const troubleshootingList = document.getElementById('troubleshootingList');
+            troubleshootingList.innerHTML = '';
+
+            appData.troubleshooting.forEach(item => {
+                const troubleshootItem = document.createElement('div');
+                troubleshootItem.className = 'troubleshoot-item';
+                troubleshootItem.innerHTML = `
+                    <div class="troubleshoot-issue">❓ ${item.issue}</div>
+                    <div style="color: var(--color-text-secondary);">💡 ${item.solution}</div>
+                `;
+                troubleshootingList.appendChild(troubleshootItem);
+            });
+        }
+
+        // Generate configuration
+        document.getElementById('generateConfig').addEventListener('click', () => {
+            const clientId = document.getElementById('googleClientId').value;
+            const clientSecret = document.getElementById('googleClientSecret').value;
+            const allowedPaths = document.getElementById('allowedPaths').value;
+            const serverPort = document.getElementById('serverPort').value;
+            const logLevel = document.getElementById('logLevel').value;
+
+            const config = {
+                "mcpServers": {
+                    "personal-mcp-server": {
+                        "command": "python",
+                        "args": ["/caminho/para/seu/main.py"],
+                        "env": {
+                            "GOOGLE_CLIENT_ID": clientId || "seu_client_id",
+                            "GOOGLE_CLIENT_SECRET": clientSecret || "seu_client_secret",
+                            "ALLOWED_PATHS": allowedPaths || "/home/usuario/Documentos,/home/usuario/Desktop",
+                            "SERVER_PORT": serverPort,
+                            "LOG_LEVEL": logLevel
+                        }
+                    }
+                }
+            };
+
+            const configOutput = document.getElementById('configOutput');
+            const generatedConfig = document.getElementById('generatedConfig');
+            
+            configOutput.textContent = JSON.stringify(config, null, 2);
+            generatedConfig.classList.remove('hidden');
+            
+            // Trigger syntax highlighting
+            if (window.Prism) {
+                Prism.highlightElement(configOutput);
+            }
+        });
+
+        // Copy functionality
+        function copyConfig() {
+            const configOutput = document.getElementById('configOutput');
+            navigator.clipboard.writeText(configOutput.textContent).then(() => {
+                showCopyFeedback(document.querySelector('#generatedConfig .copy-btn'));
+            });
+        }
+
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent || codeBlock.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                showCopyFeedback(button);
+            });
+        }
+
+        function showCopyFeedback(button) {
+            const originalText = button.textContent;
+            const originalBg = button.style.background;
+            const originalColor = button.style.color;
+            
+            button.textContent = 'Copiado!';
+            button.style.background = 'var(--color-success)';
+            button.style.color = 'white';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = originalBg;
+                button.style.color = originalColor;
+            }, 2000);
+        }
+
+        // Clear logs function
+        function clearLogs() {
+            const logOutput = document.getElementById('logOutput');
+            logOutput.innerHTML = '<div style="color: var(--color-primary);">Logs limpos - aguardando novos eventos...</div>';
+        }
+
+        // Simulate real-time logs (for demo purposes)
+        function simulateLogs() {
+            const logOutput = document.getElementById('logOutput');
+            const logMessages = [
+                { type: 'info', message: 'Verificando conexao com Google Calendar...' },
+                { type: 'success', message: 'Conexao estabelecida com sucesso' },
+                { type: 'info', message: 'Cliente Claude Desktop conectado' },
+                { type: 'warning', message: 'Rate limit da API proximo do limite' },
+                { type: 'success', message: 'Arquivo lido com sucesso: documento.txt' }
+            ];
+
+            const colors = {
+                info: 'var(--color-primary)',
+                success: 'var(--color-success)', 
+                warning: 'var(--color-warning)',
+                error: 'var(--color-error)'
+            };
+
+            setInterval(() => {
+                if (document.getElementById('logs').classList.contains('active')) {
+                    const randomLog = logMessages[Math.floor(Math.random() * logMessages.length)];
+                    const timestamp = new Date().toLocaleString('pt-BR');
+                    const logEntry = document.createElement('div');
+                    logEntry.style.color = colors[randomLog.type];
+                    logEntry.textContent = `${timestamp} - ${randomLog.type.toUpperCase()} - ${randomLog.message}`;
+                    
+                    logOutput.appendChild(logEntry);
+                    logOutput.scrollTop = logOutput.scrollHeight;
+                    
+                    // Keep only last 50 log entries
+                    while (logOutput.children.length > 50) {
+                        logOutput.removeChild(logOutput.firstChild);
+                    }
+                }
+            }, 5000); // Add a new log every 5 seconds
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadModules();
+            loadToolsDocumentation();
+            loadTroubleshooting();
+            simulateLogs();
+            
+            // Initialize syntax highlighting
+            if (window.Prism) {
+                Prism.highlightAll();
+            }
+        });
+
+        // Handle responsive design
+        function handleResize() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            if (window.innerWidth <= 768) {
+                mobileMenuBtn.style.display = 'block';
+            } else {
+                mobileMenuBtn.style.display = 'none';
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call on initial load
+    </script>
+</body>
+</html>
