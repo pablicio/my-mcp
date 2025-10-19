@@ -4,6 +4,16 @@
 
 ## 🚀 Início Rápido (30 segundos)
 
+### Opção 1: Interface Web (Recomendado)
+```bash
+# Execute a interface web
+start_web_interface.bat
+
+# Abra no navegador
+http://localhost:5000
+```
+
+### Opção 2: Integração com Claude Desktop
 ```bash
 # 1. Execute o menu interativo
 run_tests.bat
@@ -22,6 +32,7 @@ run_tests.bat
 
 ## 📚 Documentação
 
+- **[WEB_INTERFACE.md](WEB_INTERFACE.md)** - Interface Web Completa 🌐 ⭐
 - **[QUICKSTART_VISUAL.md](QUICKSTART_VISUAL.md)** - Guia visual rápido ⭐
 - **[GUIA_TESTES.md](GUIA_TESTES.md)** - Como testar e verificar conexão
 - **[COMO_USAR.md](COMO_USAR.md)** - Documentação completa
@@ -29,6 +40,15 @@ run_tests.bat
 ---
 
 ## ✨ Funcionalidades
+
+### 🌐 Interface Web (NOVO!)
+- Dashboard em tempo real com estatísticas
+- Gerenciamento visual de tarefas
+- Criação de tarefas com formulário intuitivo
+- Logs do servidor ao vivo
+- Atualização automática a cada 5 segundos
+- Design moderno e responsivo
+- **Acesse:** `start_web_interface.bat` → http://localhost:5000
 
 ### 📋 Gerenciamento de Tarefas
 - Criar, listar, completar e deletar tarefas
