@@ -1,113 +1,161 @@
-# 🚀 MCP Server Pessoal v1.0.0
+# 🎯 MCP SERVER PESSOAL v1.0.0
 
-> Servidor extensível baseado no Model Context Protocol (MCP) para uso com Claude Desktop
+> Servidor MCP extensível para uso pessoal com Claude Desktop
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![MCP](https://img.shields.io/badge/MCP-1.2.0-green.svg)](https://modelcontextprotocol.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
----
-
-## 📖 Índice
-
-- [Características](#-características)
-- [Instalação Rápida](#-instalação-rápida)
-- [Configuração](#️-configuração)
-- [Uso](#-uso)
-- [Testes](#-testes)
-- [Desenvolvimento](#️-desenvolvimento)
-- [Troubleshooting](#-troubleshooting)
-- [Documentação](#-documentação)
-
----
-
-## ✨ Características
-
-- 🔒 **Segurança**: Validação rigorosa de caminhos e controle de acesso por diretório
-- 📁 **Sistema de Arquivos**: Leitura, escrita, busca e gerenciamento completo
-- ✅ **Tarefas**: Sistema de gerenciamento de tarefas com prioridades e prazos
-- 📅 **Google Calendar**: Integração opcional com sua agenda Google
-- 🛠️ **Extensível**: Arquitetura modular para adicionar novos recursos facilmente
-- 📊 **Logging**: Sistema completo de logs para debugging e auditoria
-
----
-
-## 🚀 Instalação Rápida
-
-### Pré-requisitos
-
-- **Python 3.9+** ([Download](https://www.python.org/downloads/))
-- **Claude Desktop** instalado
-- Windows, macOS ou Linux
-
-### Setup Automatizado (3 minutos)
+## 🚀 Início Rápido (30 segundos)
 
 ```bash
-# 1. Navegue até o diretório do projeto
-cd C:\projetos\IA\mcp\mcp-tools2
+# 1. Execute o menu interativo
+run_tests.bat
 
-# 2. Execute o setup
-python setup.py
-
-# 3. Siga as instruções na tela
+# 2. Escolha [1] para testar
+# 3. Escolha [2] para iniciar
+# 4. Abra Claude Desktop e teste!
 ```
 
-O script irá automaticamente:
-- ✅ Verificar Python 3.9+
-- ✅ Instalar todas as dependências
-- ✅ Criar arquivo .env com configurações
-- ✅ Configurar Claude Desktop
-- ✅ Criar estrutura de diretórios
-- ✅ Executar testes de validação
-
-**📚 Guia Detalhado:** Veja [QUICKSTART.md](QUICKSTART.md) para instruções passo a passo.
+**🎉 Pronto!** Agora você pode usar comandos como:
+- `"liste minhas tarefas"`
+- `"crie uma nota sobre Python"`
+- `"liste arquivos em C:\projetos"`
 
 ---
 
-## ⚙️ Configuração
+## 📚 Documentação
 
-### 1. Arquivo .env
+- **[QUICKSTART_VISUAL.md](QUICKSTART_VISUAL.md)** - Guia visual rápido ⭐
+- **[GUIA_TESTES.md](GUIA_TESTES.md)** - Como testar e verificar conexão
+- **[COMO_USAR.md](COMO_USAR.md)** - Documentação completa
 
-Edite o arquivo `.env` (criado pelo setup ou copie de `.env.example`):
+---
 
-```env
-# Diretórios permitidos (USE CAMINHOS ABSOLUTOS!)
-# Windows
-ALLOWED_DIRECTORIES=C:\\Users\\SeuUsuario\\Documents,C:\\Users\\SeuUsuario\\Desktop
+## ✨ Funcionalidades
 
-# Linux/Mac
-ALLOWED_DIRECTORIES=/home/usuario/Documents,/home/usuario/Desktop
+### 📋 Gerenciamento de Tarefas
+- Criar, listar, completar e deletar tarefas
+- Buscar tarefas por texto
+- Filtrar por status (pendente/concluída)
+- Definir prioridades e datas limite
 
-# Configurações do servidor
-DEBUG=false
-LOG_LEVEL=INFO
+### 📝 Sistema de Notas
+- Criar notas com tags
+- Listar notas recentes
+- Organização simples e eficiente
 
-# Google Calendar (opcional)
-# GOOGLE_CLIENT_ID=seu_client_id
-# GOOGLE_CLIENT_SECRET=seu_client_secret
+### 📁 Acesso a Arquivos
+- Ler e escrever arquivos
+- Listar diretórios
+- Buscar arquivos
+- Controle de permissões
+
+### 📅 Calendário Google (Opcional)
+- Criar eventos
+- Listar próximos eventos
+- Integração OAuth2
+
+---
+
+## 🛠️ Ferramentas Disponíveis
+
+### Menu Interativo (`run_tests.bat`)
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║         MCP SERVER PESSOAL - MENU DE TESTE E EXECUÇÃO          ║
+╚══════════════════════════════════════════════════════════════════╝
+
+[1] 🧪 Testar Servidor      → Verifica funcionamento
+[2] 🚀 Iniciar Servidor     → Modo com feedback visual
+[3] 📊 Monitor Real-time    → Dashboard de atividade
+[4] 📝 Ver Logs            → Logs em tempo real
+[5] 🔍 Ver Status          → Status atual do servidor
+[6] 🧹 Limpar Logs         → Remove arquivos de log
+[7] ❌ Sair
 ```
 
-**⚠️ IMPORTANTE:** Use sempre caminhos absolutos!
+### Scripts Individuais
 
-### 2. Claude Desktop
+| Script | Descrição |
+|--------|-----------|
+| `test_connection.py` | Executa bateria de testes completa |
+| `main_verbose.py` | Servidor com feedback detalhado |
+| `monitor.py` | Monitor visual em tempo real |
+| `main.py` | Servidor normal (produção) |
 
-O setup configura automaticamente, mas se necessário, edite manualmente:
+---
 
-**Localização:**
-- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Linux:** `~/.config/Claude/claude_desktop_config.json`
+## 📊 Como Verificar se Está Funcionando
 
-**Conteúdo:**
+### Método 1: Testes Automáticos (Recomendado)
+
+```bash
+run_tests.bat → [1] Testar Servidor
+```
+
+**Resultado esperado:**
+```
+✅ INITIALIZATION       PASSOU
+✅ MODULES             PASSOU
+✅ TASKS               PASSOU
+✅ FILESYSTEM          PASSOU
+✅ TOOLS               PASSOU
+
+🎉 TODOS OS TESTES PASSARAM!
+```
+
+### Método 2: Monitor Visual
+
+```bash
+run_tests.bat → [3] Monitor em Tempo Real
+```
+
+Mostra:
+- Status do servidor (rodando/parado)
+- Estatísticas de logs
+- Contador de tarefas
+- Últimas linhas do log
+
+### Método 3: Teste no Claude Desktop
+
+1. Inicie o servidor: `run_tests.bat → [2]`
+2. Abra Claude Desktop
+3. Digite: `"liste minhas tarefas"`
+4. Se funcionar, está conectado! ✅
+
+---
+
+## 🔧 Configuração
+
+### Arquivo `.env`
+
+```ini
+# Debug
+DEBUG=False
+
+# Diretórios permitidos (separados por vírgula)
+ALLOWED_DIRECTORIES="C:\projetos\IA,C:\Users\PC Gamer\Documents"
+
+# Logs
+LOG_LEVEL=INFO
+LOG_FILE=./logs/mcp_server.log
+
+# Tarefas
+TASKS_DB_PATH=./data/tasks.json
+
+# Google Calendar (opcional)
+GOOGLE_CLIENT_ID=seu_client_id
+GOOGLE_CLIENT_SECRET=seu_secret
+```
+
+### Configuração no Claude Desktop
+
+Arquivo: `%APPDATA%\Claude\claude_desktop_config.json`
+
 ```json
 {
   "mcpServers": {
     "personal-server": {
-      "command": "python",
-      "args": ["C:\\caminho\\completo\\para\\main.py"],
-      "env": {
-        "PYTHONPATH": "C:\\caminho\\completo\\para\\projeto"
-      }
+      "command": "C:\\projetos\\IA\\mcp\\mcp-tools2\\venv\\Scripts\\python.exe",
+      "args": ["C:\\projetos\\IA\\mcp\\mcp-tools2\\main.py"]
     }
   }
 }
@@ -115,262 +163,192 @@ O setup configura automaticamente, mas se necessário, edite manualmente:
 
 ---
 
-## 🎮 Uso
+## 🐛 Solução de Problemas
 
-### Iniciar o Servidor
+### ❌ Servidor não inicia
 
 ```bash
-# Windows
-start.bat
+# 1. Verifique dependências
+venv\Scripts\activate
+pip install -r requirements.txt
 
-# Linux/Mac
-./start.sh
+# 2. Teste com modo verbose
+python main_verbose.py
 
-# Ou diretamente
-python main.py
+# 3. Veja os logs
+type logs\mcp_server.log
 ```
 
-### Usar no Claude Desktop
+### ❌ Claude não reconhece os comandos
 
-1. **Reinicie o Claude Desktop** (feche completamente!)
-2. Abra uma nova conversa
-3. Digite comandos naturais
+1. **Reinicie Claude Desktop completamente**
+2. **Verifique configuração:** `%APPDATA%\Claude\claude_desktop_config.json`
+3. **Monitore logs:** `run_tests.bat → [4]`
+4. **Execute testes:** `run_tests.bat → [1]`
 
-**Exemplos de Comandos:**
+### ❌ Testes falharam
 
-```
-📁 Arquivos:
-• Liste os arquivos na minha pasta Documents
-• Leia o arquivo README.md
-• Crie arquivo teste.py com código Hello World
-• Procure arquivos .txt em Documents recursivamente
+```bash
+# 1. Ative debug
+echo DEBUG=True >> .env
 
-✅ Tarefas:
-• Crie tarefa: "Revisar documentação" com prioridade alta
-• Mostre minhas tarefas pendentes
-• Marque tarefa #3 como concluída
+# 2. Execute testes novamente
+python test_connection.py
 
-📅 Calendar (se configurado):
-• Crie evento "Reunião de equipe" amanhã às 14h
-• Quais são meus compromissos hoje?
+# 3. Veja erros detalhados nos logs
 ```
 
 ---
 
-## 🧪 Testes
-
-### Teste Rápido
-```bash
-python -m tests.quick_test
-```
-
-### Testes Unitários
-```bash
-pytest tests/unit/ -v
-```
-
-### Testes de Integração
-```bash
-pytest tests/integration/ -v
-```
-
-### Todos os Testes com Coverage
-```bash
-pytest tests/ --cov=. --cov-report=html
-```
-
-**📚 Mais sobre testes:** Veja estrutura completa em `tests/`
-
----
-
-## 🛠️ Desenvolvimento
-
-### Estrutura do Projeto
+## 📦 Estrutura do Projeto
 
 ```
 mcp-tools2/
-├── main.py              # Ponto de entrada
-├── setup.py             # Script de instalação
-├── dev.py               # Ferramentas de desenvolvimento
+├── 📄 README.md                    ⭐ Este arquivo
+├── 📄 QUICKSTART_VISUAL.md         🚀 Guia visual rápido
+├── 📄 GUIA_TESTES.md              🧪 Como testar
+├── 📄 COMO_USAR.md                📚 Documentação completa
 │
-├── config/              # Configurações centralizadas
-│   ├── settings.py      # Settings com Pydantic
-│   └── logging.py       # Configuração de logs
+├── 🎮 run_tests.bat               ⭐ Menu principal
+├── 🧪 test_connection.py          Testes automáticos
+├── 📊 monitor.py                  Monitor visual
+├── 🚀 main_verbose.py             Servidor com feedback
+├── ⚙️  main.py                     Servidor normal
 │
-├── core/                # Núcleo do servidor MCP
-│   ├── server.py        # Servidor principal
-│   ├── registry.py      # Registro de ferramentas
-│   └── security.py      # Validações de segurança
+├── core/                          Núcleo do servidor
+│   ├── server.py                 Servidor MCP principal
+│   └── registry.py               Registro de ferramentas
 │
-├── modules/             # Módulos funcionais (plugins)
-│   ├── base.py          # Classe base
-│   ├── filesystem/      # Sistema de arquivos
-│   ├── tasks/           # Gerenciamento de tarefas
-│   └── calendar/        # Google Calendar
+├── modules/                       Módulos funcionais
+│   ├── tasks/                    Gerenciamento de tarefas
+│   ├── filesystem/               Acesso a arquivos
+│   └── calendar/                 Integração com Google
 │
-├── utils/               # Utilitários compartilhados
+├── config/                        Configurações
+│   ├── settings.py              Configurações globais
+│   └── logging.py               Sistema de logs
 │
-└── tests/               # Testes centralizados
-    ├── quick_test.py    # Teste rápido
-    ├── unit/            # Testes unitários
-    └── integration/     # Testes de integração
+├── logs/                         Arquivos de log
+│   └── mcp_server.log           Log principal
+│
+└── data/                         Dados persistentes
+    └── tasks.json               Banco de tarefas
 ```
 
-### Ferramentas de Desenvolvimento
+---
+
+## 🎯 Casos de Uso
+
+### Desenvolvimento
 
 ```bash
-# Menu interativo
-python dev.py
+# Terminal 1: Servidor com feedback
+run_tests.bat → [2]
 
-# Opções disponíveis:
-# 1. Testes rápidos
-# 2. Testes unitários
-# 3. Testes de integração
-# 4. Coverage
-# 5. Limpar projeto
-# 6. Instalar dependências
-# 7. Iniciar em modo debug
-# 8. Verificar código
-# 9. Verificar configuração
+# Terminal 2: Monitor de atividade
+run_tests.bat → [3]
+
+# Trabalhar normalmente no Claude Desktop
 ```
 
-### Adicionar Novo Módulo
-
-1. Crie diretório em `modules/`
-2. Implemente classe herdando `BaseModule`
-3. Registre em `core/server.py`
-
-**📚 Guia Completo:** Veja [CONTRIBUTING.md](CONTRIBUTING.md)
-
----
-
-## 🐛 Troubleshooting
-
-### Claude não encontra o servidor
-
-1. Reinicie o Claude Desktop **completamente**
-2. Verifique `claude_desktop_config.json`
-3. Teste manualmente: `python main.py`
-4. Consulte logs: `logs/mcp_server.log`
-
-### Erro "Diretório não permitido"
-
-1. Verifique `ALLOWED_DIRECTORIES` no `.env`
-2. Use caminhos absolutos
-3. Certifique-se que os diretórios existem
-
-### Erro de importação
-
-```bash
-pip install -r requirements.txt --force-reinstall
-```
-
-### Logs detalhados
-
-```bash
-# Ative no .env
-DEBUG=true
-LOG_LEVEL=DEBUG
-
-# Ver logs em tempo real
-# Windows PowerShell:
-Get-Content logs\mcp_server.log -Wait
-
-# Linux/Mac:
-tail -f logs/mcp_server.log
-```
-
----
-
-## 📚 Documentação
-
-### Documentos Principais
-
-| Documento | Descrição |
-|-----------|-----------|
-| **[README.md](README.md)** | Este arquivo - Visão geral completa |
-| **[QUICKSTART.md](QUICKSTART.md)** | Guia de início rápido (3 minutos) |
-| **[CONTRIBUTING.md](CONTRIBUTING.md)** | Guia de desenvolvimento |
-| **[CHANGELOG.md](CHANGELOG.md)** | Histórico de mudanças |
-| **[REFACTOR_SUMMARY.md](REFACTOR_SUMMARY.md)** | Resumo da refatoração |
-
-### Scripts Úteis
-
-| Script | Descrição |
-|--------|-----------|
-| `python dev.py` | Menu interativo de desenvolvimento |
-| `python -m tests.quick_test` | Teste rápido de validação |
-| `python clean_project.py` | Remove arquivos desnecessários |
-| `python show_improvements.py` | Mostra melhorias implementadas |
-| `COMANDOS_PRONTOS.bat` | Menu Windows interativo |
-
----
-
-## 🔒 Segurança
-
-O servidor implementa múltiplas camadas de segurança:
-
-- ✅ **Validação de Caminhos**: Proteção contra path traversal
-- ✅ **Allowlist**: Apenas diretórios configurados são acessíveis
-- ✅ **Sanitização**: Nomes de arquivos são sanitizados
-- ✅ **Limites**: Tamanho máximo de arquivo (10MB configurável)
-- ✅ **Timeout**: Operações têm timeout (30s configurável)
-- ✅ **Logging**: Todas as operações são registradas
-
-**💡 Dica:** Configure apenas os diretórios necessários em `ALLOWED_DIRECTORIES`.
-
----
-
-## 📊 Comandos Úteis
+### Produção (dia a dia)
 
 ```bash
 # Iniciar servidor
-python main.py
-start.bat              # Windows
-./start.sh             # Linux/Mac
+run_tests.bat → [2]
 
-# Testes
-python -m tests.quick_test          # Rápido
-pytest tests/ -v                    # Completo
-pytest tests/ --cov=.               # Com coverage
+# Usar Claude Desktop normalmente
+# O servidor roda em background
+```
 
-# Desenvolvimento
-python dev.py                       # Menu interativo
-python clean_project.py             # Limpar arquivos antigos
+### Debugging
 
-# Windows
-COMANDOS_PRONTOS.bat                # Menu Windows
+```bash
+# 1. Ativar debug
+echo DEBUG=True > .env
+
+# 2. Ver logs ao vivo
+run_tests.bat → [4]
+
+# 3. Usar Claude Desktop e ver o que acontece
 ```
 
 ---
 
-## 🆘 Suporte
+## 📝 Comandos Exemplo no Claude
 
-- 📖 **Documentação:** Veja arquivos `.md` na raiz
-- 📊 **Logs:** `./logs/mcp_server.log`
-- 🐛 **Debug:** `DEBUG=true python main.py`
-- 📝 **Checklist:** [POST_REFACTOR_CHECKLIST.md](POST_REFACTOR_CHECKLIST.md)
+```
+# Tarefas
+"crie uma tarefa: Estudar Python"
+"liste minhas tarefas pendentes"
+"complete a tarefa 1"
+"busque tarefas sobre Python"
+"delete a tarefa 2"
 
----
+# Notas
+"crie uma nota sobre MCP Server"
+"liste minhas últimas notas"
 
-## 📝 Licença
-
-MIT License - Use como desejar!
-
----
-
-## 🎉 Agradecimentos
-
-Desenvolvido com ❤️ usando:
-- [Model Context Protocol](https://modelcontextprotocol.io)
-- [Claude](https://claude.ai) by Anthropic
-- [Pydantic](https://docs.pydantic.dev)
-- [FastMCP](https://github.com/jlowin/fastmcp)
+# Arquivos
+"liste os arquivos em C:\projetos\IA"
+"leia o arquivo README.md"
+"crie um arquivo teste.txt com 'Hello World'"
+"busque arquivos .py no diretório"
+```
 
 ---
 
-<div align="center">
+## 🔄 Atualizações
 
-**[🏠 Início](#-mcp-server-pessoal-v100)** • **[⚡ Quick Start](QUICKSTART.md)** • **[📖 Contribuir](CONTRIBUTING.md)** • **[📝 Changelog](CHANGELOG.md)**
+### v1.0.0 (2025-10-18)
+- ✅ Sistema de testes automáticos
+- ✅ Menu interativo (run_tests.bat)
+- ✅ Monitor visual em tempo real
+- ✅ Modo verbose com feedback
+- ✅ Documentação completa
+- ✅ Melhor tratamento de erros
+- ✅ Guias visuais (QUICKSTART_VISUAL.md, GUIA_TESTES.md)
 
-</div>
+---
+
+## 🤝 Contribuindo
+
+Este é um projeto pessoal, mas melhorias são bem-vindas!
+
+1. Faça fork do projeto
+2. Crie uma branch (`git checkout -b feature/nova-funcionalidade`)
+3. Commit suas mudanças (`git commit -am 'Adiciona nova funcionalidade'`)
+4. Push para a branch (`git push origin feature/nova-funcionalidade`)
+5. Abra um Pull Request
+
+---
+
+## 📄 Licença
+
+MIT License - use como quiser!
+
+---
+
+## 🆘 Precisa de Ajuda?
+
+1. **Leia primeiro:** [QUICKSTART_VISUAL.md](QUICKSTART_VISUAL.md) ⭐
+2. **Testes:** [GUIA_TESTES.md](GUIA_TESTES.md)
+3. **Documentação:** [COMO_USAR.md](COMO_USAR.md)
+4. **Execute os testes:** `run_tests.bat → [1]`
+5. **Veja os logs:** `run_tests.bat → [4]`
+
+---
+
+## 🎉 Pronto para Começar?
+
+```bash
+run_tests.bat
+```
+
+**É só isso!** O menu vai te guiar. 🚀
+
+---
+
+**Desenvolvido com ❤️ para integração com Claude Desktop**
+
+*Última atualização: 18/10/2025*
