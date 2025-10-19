@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from modules.tasks.tools import TasksTools
 from config.settings import settings
+from core.connection_monitor import get_connection_monitor
 
 # Configurar logging aprimorado
 log_dir = Path('./logs')
@@ -41,6 +42,7 @@ CORS(app)  # Permitir CORS para desenvolvimento
 
 # Instâncias dos módulos
 tasks_module = None
+connection_monitor = None
 
 @app.route('/')
 def index():
@@ -123,6 +125,9 @@ def get_tasks():
         if not tasks_module:
             logger.warning("⚠️ Módulo de tarefas não inicializado")
             return jsonify({'error': 'Tasks module not initialized'}), 500
+        
+        # ✨ FORÇA RELOAD DOS DADOS DO ARQUIVO ANTES DE CADA REQUISIÇÃO
+        asyncio.run(tasks_module.load_data())
         
         status = request.args.get('status', 'all')
         limit = int(request.args.get('limit', 50))
@@ -359,6 +364,43 @@ def search_tasks():
         logger.error(f"❌ Erro ao buscar tarefas: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/connections')
+def get_connections():
+    """Retorna informações sobre clientes MCP conectados"""
+    try:
+        if not connection_monitor:
+            logger.warning("⚠️ Monitor de conexões não inicializado")
+            return jsonify({
+                'clients': [],
+                'stats': {
+                    'total_clients': 0,
+                    'active_clients': 0,
+                    'total_requests': 0
+                },
+                'active': 0
+            })
+        
+        # Registrar Claude Desktop se receber requisição
+        connection_monitor.register_client(
+            client_id="claude-desktop",
+            client_name="Claude Desktop App"
+        )
+        
+        clients = connection_monitor.get_all_clients()
+        stats = connection_monitor.get_stats()
+        
+        logger.info(f"📡 Conexões consultadas: {len(clients)} clientes")
+        
+        return jsonify({
+            'clients': [c.to_dict() for c in clients],
+            'stats': stats,
+            'active': len(connection_monitor.get_active_clients())
+        })
+        
+    except Exception as e:
+        logger.error(f"❌ Erro ao listar conexões: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/metrics')
 def get_metrics():
     """Retorna métricas detalhadas do sistema"""
@@ -378,6 +420,11 @@ def get_metrics():
         # Taxa de conclusão
         completion_rate = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
         
+        # Estatísticas de conexões
+        connection_stats = {}
+        if connection_monitor:
+            connection_stats = connection_monitor.get_stats()
+        
         metrics = {
             'tasks': {
                 'total': total_tasks,
@@ -393,6 +440,7 @@ def get_metrics():
             'notes': {
                 'total': len(tasks_module.notes)
             },
+            'connections': connection_stats,
             'timestamp': datetime.now().isoformat()
         }
         
@@ -405,7 +453,7 @@ def get_metrics():
 
 def initialize_modules():
     """Inicializa os módulos do MCP com logging detalhado"""
-    global tasks_module
+    global tasks_module, connection_monitor
     
     try:
         logger.info("="*60)
@@ -415,10 +463,18 @@ def initialize_modules():
         tasks_module = TasksTools()
         asyncio.run(tasks_module.initialize())
         
+        # Inicializar monitor de conexões
+        connection_monitor = get_connection_monitor()
+        connection_monitor.register_client(
+            client_id="web-interface",
+            client_name="Web Dashboard"
+        )
+        
         task_count = len(tasks_module.tasks)
         note_count = len(tasks_module.notes)
         
         logger.info(f"✅ Módulo de tarefas inicializado")
+        logger.info(f"✅ Monitor de conexões inicializado")
         logger.info(f"📊 Estatísticas iniciais:")
         logger.info(f"   - Tarefas: {task_count}")
         logger.info(f"   - Notas: {note_count}")
@@ -454,6 +510,7 @@ def main():
     print("  GET  /api/logs            - Logs do servidor")
     print("  GET  /api/search/tasks    - Buscar tarefas")
     print("  GET  /api/metrics         - Métricas do sistema")
+    print("  GET  /api/connections     - Clientes MCP conectados")
     print()
     print("📝 Logs salvos em: ./logs/api_server.log")
     print("Pressione Ctrl+C para parar")

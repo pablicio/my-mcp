@@ -20,6 +20,8 @@ class TasksTools(BaseModule):
         self.db_path = Path(settings.TASKS_DB_PATH)
         self.tasks = []
         self.notes = []
+        self.next_task_id = 1
+        self.next_note_id = 1
 
     async def is_available(self) -> bool:
         """Sempre disponível - usa armazenamento local."""
@@ -61,6 +63,16 @@ class TasksTools(BaseModule):
                     data = json.load(f)
                     self.tasks = data.get('tasks', [])
                     self.notes = data.get('notes', [])
+                    self.next_task_id = data.get('next_task_id', 1)
+                    self.next_note_id = data.get('next_note_id', 1)
+                    
+                    # Atualizar IDs se necessário
+                    if self.tasks:
+                        max_task_id = max(t['id'] for t in self.tasks)
+                        self.next_task_id = max(self.next_task_id, max_task_id + 1)
+                    if self.notes:
+                        max_note_id = max(n['id'] for n in self.notes)
+                        self.next_note_id = max(self.next_note_id, max_note_id + 1)
             else:
                 self.tasks = []
                 self.notes = []
@@ -76,6 +88,8 @@ class TasksTools(BaseModule):
             data = {
                 'tasks': self.tasks,
                 'notes': self.notes,
+                'next_task_id': self.next_task_id,
+                'next_note_id': self.next_note_id,
                 'last_updated': datetime.now().isoformat()
             }
             with open(self.db_path, 'w', encoding='utf-8') as f:
@@ -103,7 +117,8 @@ class TasksTools(BaseModule):
             if priority not in ['low', 'medium', 'high']:
                 priority = 'medium'
 
-            task_id = len(self.tasks) + 1
+            task_id = self.next_task_id
+            self.next_task_id += 1
 
             task = {
                 'id': task_id,
@@ -258,7 +273,8 @@ class TasksTools(BaseModule):
             content = validate_string(content, max_length=5000)
 
             tag_list = [tag.strip() for tag in tags.split(',')] if tags else []
-            note_id = len(self.notes) + 1
+            note_id = self.next_note_id
+            self.next_note_id += 1
 
             note = {
                 'id': note_id,

@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadEvents();
     loadNotes();
     loadLogs();
+    loadConnections();
     
     autoRefreshInterval = setInterval(() => {
         loadStatus();
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeTab === 'tasks' || activeTab === 'dashboard') loadTasks();
         if (activeTab === 'calendar' || activeTab === 'dashboard') loadEvents();
         if (activeTab === 'logs') loadLogs();
+        if (activeTab === 'connections') loadConnections();
     }, 5000);
     
     console.log('✅ Dashboard inicializado');
@@ -309,6 +311,115 @@ function renderNotes(notes) {
             ` : ''}
         </div>
     `).join('');
+}
+
+// ========== CONNECTIONS ==========
+
+async function loadConnections() {
+    try {
+        const response = await fetch(`${API_URL}/connections`);
+        const data = await response.json();
+        
+        const clients = data.clients || [];
+        const stats = data.stats || {};
+        
+        // Atualizar estatísticas
+        document.getElementById('activeClientsCount').textContent = data.active || 0;
+        document.getElementById('totalRequestsCount').textContent = stats.total_requests || 0;
+        
+        // Contar ferramentas únicas usadas
+        const allTools = new Set();
+        clients.forEach(client => {
+            if (client.tools_used) {
+                client.tools_used.forEach(tool => allTools.add(tool));
+            }
+        });
+        document.getElementById('toolsUsedCount').textContent = allTools.size;
+        
+        renderConnections(clients);
+        
+        console.log(`✅ ${clients.length} conexões carregadas`);
+    } catch (error) {
+        console.error('❌ Erro ao carregar conexões:', error);
+        showToast('Erro ao carregar conexões', 'error');
+    }
+}
+
+function renderConnections(clients) {
+    const container = document.getElementById('connectionsList');
+    
+    if (clients.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📡</div>
+                <div class="empty-state-title">Nenhum cliente conectado</div>
+                <p>Aguardando conexões de clientes MCP...</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = clients.map(client => {
+        const statusClass = client.status === 'active' ? 'active' : 'disconnected';
+        const statusIcon = client.status === 'active' ? '✅' : '⚪';
+        const statusText = client.status === 'active' ? 'Ativo' : 'Desconectado';
+        
+        const connectedTime = formatDateTime(client.connected_at);
+        const lastActivity = formatDateTime(client.last_activity);
+        
+        return `
+            <div class="connection-item ${statusClass}">
+                <div class="connection-info">
+                    <div class="connection-name">
+                        ${getClientIcon(client.client_name)} ${escapeHtml(client.client_name)}
+                        <span class="connection-status ${statusClass}">
+                            ${statusIcon} ${statusText}
+                        </span>
+                    </div>
+                    <div class="connection-details">
+                        <div class="connection-detail">
+                            <span>🔌</span>
+                            <span>Conectado: ${connectedTime}</span>
+                        </div>
+                        <div class="connection-detail">
+                            <span>⚡</span>
+                            <span>Última atividade: ${lastActivity}</span>
+                        </div>
+                        <div class="connection-detail">
+                            <span>📊</span>
+                            <span>Requisições: ${client.requests_count || 0}</span>
+                        </div>
+                    </div>
+                    ${client.tools_used && client.tools_used.length > 0 ? `
+                        <div class="connection-tools">
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">🔧 Ferramentas usadas:</div>
+                            <div class="tools-list">
+                                ${client.tools_used.slice(0, 10).map(tool => 
+                                    `<span class="tool-badge">${escapeHtml(tool)}</span>`
+                                ).join('')}
+                                ${client.tools_used.length > 10 ? `<span class="tool-badge">+${client.tools_used.length - 10}</span>` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="connection-stats">
+                    <div class="connection-metric">
+                        <div class="connection-metric-value">${client.requests_count || 0}</div>
+                        <div class="connection-metric-label">Requests</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function getClientIcon(clientName) {
+    const name = clientName.toLowerCase();
+    if (name.includes('claude')) return '🤖';
+    if (name.includes('server')) return '🖥️';
+    if (name.includes('web')) return '🌐';
+    if (name.includes('desktop')) return '💻';
+    return '📡';
 }
 
 // ========== LOGS ==========

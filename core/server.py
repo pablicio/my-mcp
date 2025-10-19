@@ -9,9 +9,11 @@ from mcp.server.fastmcp import FastMCP
 
 from config.settings import settings
 from core.registry import ToolRegistry
+from core.connection_monitor import get_connection_monitor
 from modules.calendar.tools import CalendarTools
 from modules.filesystem.tools import FilesystemTools  
 from modules.tasks.tools import TasksTools
+from modules.connections.tools import ConnectionTools
 
 class MCPPersonalServer:
     """Servidor MCP pessoal extensível."""
@@ -21,6 +23,16 @@ class MCPPersonalServer:
         self.mcp = FastMCP("personal-server")
         self.registry = ToolRegistry()
         self.modules = {}
+        self.connection_monitor = get_connection_monitor()
+        
+        # Registrar servidor como cliente "principal"
+        self.connection_monitor.register_client(
+            client_id="mcp-server",
+            client_name="MCP Personal Server"
+        )
+        
+        # Variável para armazenar ID do cliente atual
+        self.current_client_id = "claude-desktop"
 
     async def initialize(self):
         """Inicializa o servidor e todos os módulos."""
@@ -39,7 +51,8 @@ class MCPPersonalServer:
         modules_to_load = [
             ("calendar", CalendarTools),
             ("filesystem", FilesystemTools), 
-            ("tasks", TasksTools)
+            ("tasks", TasksTools),
+            ("connections", ConnectionTools)
         ]
 
         for name, module_class in modules_to_load:
@@ -61,8 +74,29 @@ class MCPPersonalServer:
     async def register_tools(self):
         """Registra todas as ferramentas no FastMCP."""
         for tool_name, tool_func in self.registry.tools.items():
-            # Usar o decorator corretamente com ()
-            decorated_tool = self.mcp.tool()(tool_func)
+            # Criar wrapper para monitoramento com closure correto
+            def create_monitored_wrapper(name, func):
+                async def monitored_tool(*args, **kwargs):
+                    # Registrar atividade do cliente atual
+                    self.connection_monitor.record_activity(
+                        client_id=self.current_client_id,
+                        tool_name=name
+                    )
+                    self.logger.info(f"Ferramenta '{name}' chamada por {self.current_client_id}")
+                    # Executar ferramenta original
+                    return await func(*args, **kwargs)
+                
+                # Preservar metadados da função original
+                monitored_tool.__name__ = func.__name__
+                monitored_tool.__doc__ = func.__doc__
+                if hasattr(func, '__annotations__'):
+                    monitored_tool.__annotations__ = func.__annotations__
+                    
+                return monitored_tool
+            
+            # Criar wrapper monitorado e decorar
+            wrapped_func = create_monitored_wrapper(tool_name, tool_func)
+            decorated_tool = self.mcp.tool()(wrapped_func)
             self.logger.debug(f"Ferramenta registrada: {tool_name}")
 
     def run_sync(self):
@@ -84,8 +118,12 @@ class MCPPersonalServer:
 
     def get_status(self) -> Dict[str, Any]:
         """Retorna o status do servidor."""
+        connection_stats = self.connection_monitor.get_stats()
+        
         return {
             "status": "running",
             "modules": {name: module.get_status() for name, module in self.modules.items()},
-            "tools_count": len(self.registry.tools)
+            "tools_count": len(self.registry.tools),
+            "connections": connection_stats,
+            "active_clients": len(self.connection_monitor.get_active_clients())
         }
