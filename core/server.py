@@ -1,5 +1,5 @@
 """
-🚀 Servidor MCP principal.
+Servidor MCP principal.
 """
 
 import asyncio
@@ -44,30 +44,40 @@ class MCPPersonalServer:
 
         for name, module_class in modules_to_load:
             try:
-                self.logger.info(f"Carregando módulo {name}...")
+                self.logger.info(f"Carregando modulo {name}...")
                 module = module_class()
 
                 if await module.is_available():
                     await module.initialize()
                     self.modules[name] = module
                     self.registry.register_module(name, module)
-                    self.logger.info(f"Módulo {name} carregado com sucesso")
+                    self.logger.info(f"Modulo {name} carregado com sucesso")
                 else:
-                    self.logger.warning(f"Módulo {name} não está disponível")
+                    self.logger.warning(f"Modulo {name} nao esta disponivel")
 
             except Exception as e:
-                self.logger.error(f"Erro ao carregar módulo {name}: {e}")
+                self.logger.error(f"Erro ao carregar modulo {name}: {e}")
 
     async def register_tools(self):
         """Registra todas as ferramentas no FastMCP."""
         for tool_name, tool_func in self.registry.tools.items():
-            self.mcp.tool(tool_func)
+            # Usar o decorator corretamente com ()
+            decorated_tool = self.mcp.tool()(tool_func)
             self.logger.debug(f"Ferramenta registrada: {tool_name}")
 
-    async def run(self):
-        """Executa o servidor MCP."""
+    def run_sync(self):
+        """Executa o servidor MCP de forma síncrona."""
         try:
-            await self.mcp.run(host=settings.HOST, port=settings.PORT)
+            # Inicializar módulos primeiro
+            asyncio.run(self.initialize())
+            
+            self.logger.info("Servidor MCP inicializado com sucesso!")
+            self.logger.info("Aguardando conexao do Claude Desktop...")
+            self.logger.info("Para parar: Ctrl+C")
+            
+            # FastMCP.run() gerencia seu próprio loop asyncio
+            self.mcp.run()
+            
         except Exception as e:
             self.logger.error(f"Erro ao executar servidor: {e}")
             raise

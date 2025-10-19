@@ -1,4 +1,35 @@
-# Configuração pytest
+[project]
+name = "mcp-server-pessoal"
+version = "1.0.0"
+description = "Servidor extensível baseado no Model Context Protocol"
+requires-python = ">=3.9"
+readme = "README.md"
+license = { text = "MIT" }
+
+dependencies = [
+    "mcp>=1.2.0",
+    "fastmcp>=0.6.0",
+    "pydantic>=2.0.0,<3.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "google-auth>=2.0.0",
+    "google-auth-oauthlib>=1.0.0",
+    "google-auth-httplib2>=0.2.0",
+    "google-api-python-client>=2.0.0",
+    "aiofiles>=23.0.0",
+    "httpx>=0.24.0",
+    "pyyaml>=6.0",
+    "python-dateutil>=2.8.0",
+    "cryptography>=41.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
@@ -10,6 +41,7 @@ addopts = [
     "--tb=short",
     "--disable-warnings"
 ]
+asyncio_mode = "auto"
 
 [tool.coverage.run]
 source = ["."]
@@ -17,10 +49,23 @@ omit = [
     "*/tests/*",
     "*/venv/*",
     "*/__pycache__/*",
-    "setup.py"
+    "setup.py",
+    "clean_project.py"
 ]
 
 [tool.coverage.report]
 precision = 2
 show_missing = true
 skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"

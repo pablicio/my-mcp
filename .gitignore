@@ -126,10 +126,6 @@ dmypy.json
 logs/
 data/
 *.log
-*.json
-!requirements.txt
-!package.json
-.DS_Store
 
 # Google OAuth
 token.json
@@ -141,3 +137,26 @@ credentials.json
 *.swp
 *.swo
 *~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+*~
+
+# Arquivos temporários de correção/debug (não versionar)
+CORRECAO_*.txt
+CORRECAO_*.md
+RESUMO_*.txt
+STATUS.txt
+debug_*.py
+fix_*.py
+check_*.py
+test_env.py
+test_imports.py
+cleanup_project.py

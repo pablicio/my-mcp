@@ -1,5 +1,5 @@
 """
-⚙️ Configurações do MCP Server Pessoal
+Configurações do MCP Server Pessoal
 Gerenciamento centralizado de todas as configurações usando Pydantic.
 """
 
@@ -19,9 +19,7 @@ class Settings(BaseSettings):
         extra='ignore'
     )
 
-    # Servidor
-    HOST: str = "localhost"
-    PORT: int = 8080
+    # Debug
     DEBUG: bool = False
 
     # Google Calendar
@@ -30,7 +28,7 @@ class Settings(BaseSettings):
     GOOGLE_REDIRECT_URI: str = "http://localhost:3000/oauth2callback"
 
     # Sistema de arquivos
-    ALLOWED_DIRECTORIES: str = ""  # Mudado para str, vamos parsear depois
+    ALLOWED_DIRECTORIES: str = ""
     MAX_FILE_SIZE: int = 10485760  # 10MB
 
     # Tarefas
@@ -51,7 +49,6 @@ class Settings(BaseSettings):
         if v is None or v == "":
             return ""
         if isinstance(v, str):
-            # Remove aspas se existirem
             v = v.strip().strip('"').strip("'")
         return v
 
@@ -61,7 +58,7 @@ class Settings(BaseSettings):
         """Validate log level."""
         valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
         if v.upper() not in valid_levels:
-            print(f"⚠️ Nível de log inválido: {v}. Usando INFO.")
+            print(f"Nivel de log invalido: {v}. Usando INFO.")
             return 'INFO'
         return v.upper()
 
@@ -70,17 +67,15 @@ class Settings(BaseSettings):
         if not self.ALLOWED_DIRECTORIES:
             return []
         
-        # Parse a string
         dirs = [d.strip() for d in self.ALLOWED_DIRECTORIES.split(',') if d.strip()]
         
-        # Valida que existem
         valid_dirs = []
         for dir_path in dirs:
             path = Path(dir_path).resolve()
             if path.exists() and path.is_dir():
                 valid_dirs.append(str(path))
             else:
-                print(f"⚠️ Diretório não encontrado: {dir_path}")
+                print(f"Diretorio nao encontrado: {dir_path}")
         
         return valid_dirs
 
@@ -104,6 +99,3 @@ settings = Settings()
 
 # Criar diretórios necessários
 settings.ensure_directories()
-
-# Adicionar propriedade dinâmica para compatibilidade
-Settings.ALLOWED_DIRECTORIES_LIST = property(lambda self: self.get_allowed_directories())

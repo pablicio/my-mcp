@@ -1,55 +1,34 @@
 # 🚀 MCP Server Pessoal v1.0.0
 
-<div align="center">
-
-**Servidor extensível baseado no Model Context Protocol (MCP)**  
-**Permite ao Claude Desktop acessar seus recursos locais de forma segura**
+> Servidor extensível baseado no Model Context Protocol (MCP) para uso com Claude Desktop
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP](https://img.shields.io/badge/MCP-1.2.0-green.svg)](https://modelcontextprotocol.io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-[Instalação](#-instalação-rápida) • [Configuração](#️-configuração) • [Uso](#-exemplos-de-uso) • [Testes](#-testes) • [Documentação](#-documentação)
+---
 
-</div>
+## 📖 Índice
+
+- [Características](#-características)
+- [Instalação Rápida](#-instalação-rápida)
+- [Configuração](#️-configuração)
+- [Uso](#-uso)
+- [Testes](#-testes)
+- [Desenvolvimento](#️-desenvolvimento)
+- [Troubleshooting](#-troubleshooting)
+- [Documentação](#-documentação)
 
 ---
 
 ## ✨ Características
 
-### 🔒 Segurança em Primeiro Lugar
-- ✅ Validação rigorosa de caminhos (proteção contra path traversal)
-- ✅ Lista de diretórios permitidos (allowlist)
-- ✅ Sanitização de nomes de arquivos
-- ✅ Limite de tamanho de arquivos (10MB)
-- ✅ Timeout de operações (30s)
-- ✅ Logging completo de todas as ações
-
-### 📁 Gerenciamento de Arquivos
-- Leitura e escrita de arquivos
-- Listagem de diretórios (recursiva opcional)
-- Busca de arquivos por padrão
-- Informações detalhadas de arquivos
-- Criação e deleção segura
-
-### ✅ Sistema de Tarefas
-- Criar, listar e gerenciar tarefas
-- Prioridades (alta, média, baixa)
-- Status de conclusão
-- Datas de prazo
-- Sistema de notas com tags
-
-### 📅 Google Calendar (Opcional)
-- Criar eventos
-- Listar compromissos
-- Buscar eventos
-- Integração OAuth2
-
-### 🛠️ Arquitetura Extensível
-- Sistema modular baseado em plugins
-- Fácil adição de novos módulos
-- Registro automático de ferramentas
-- Testes unitários incluídos
+- 🔒 **Segurança**: Validação rigorosa de caminhos e controle de acesso por diretório
+- 📁 **Sistema de Arquivos**: Leitura, escrita, busca e gerenciamento completo
+- ✅ **Tarefas**: Sistema de gerenciamento de tarefas com prioridades e prazos
+- 📅 **Google Calendar**: Integração opcional com sua agenda Google
+- 🛠️ **Extensível**: Arquitetura modular para adicionar novos recursos facilmente
+- 📊 **Logging**: Sistema completo de logs para debugging e auditoria
 
 ---
 
@@ -57,11 +36,11 @@
 
 ### Pré-requisitos
 
-- Python 3.9 ou superior
-- Claude Desktop instalado
+- **Python 3.9+** ([Download](https://www.python.org/downloads/))
+- **Claude Desktop** instalado
 - Windows, macOS ou Linux
 
-### Setup Automatizado (Recomendado)
+### Setup Automatizado (3 minutos)
 
 ```bash
 # 1. Navegue até o diretório do projeto
@@ -73,13 +52,15 @@ python setup.py
 # 3. Siga as instruções na tela
 ```
 
-O script irá:
+O script irá automaticamente:
 - ✅ Verificar Python 3.9+
 - ✅ Instalar todas as dependências
-- ✅ Criar arquivo .env com suas configurações
-- ✅ Configurar o Claude Desktop automaticamente
-- ✅ Criar estrutura de diretórios necessária
+- ✅ Criar arquivo .env com configurações
+- ✅ Configurar Claude Desktop
+- ✅ Criar estrutura de diretórios
 - ✅ Executar testes de validação
+
+**📚 Guia Detalhado:** Veja [QUICKSTART.md](QUICKSTART.md) para instruções passo a passo.
 
 ---
 
@@ -87,22 +68,50 @@ O script irá:
 
 ### 1. Arquivo .env
 
-Edite `.env` e configure seus diretórios permitidos:
+Edite o arquivo `.env` (criado pelo setup ou copie de `.env.example`):
 
 ```env
-# USE CAMINHOS ABSOLUTOS!
+# Diretórios permitidos (USE CAMINHOS ABSOLUTOS!)
 # Windows
 ALLOWED_DIRECTORIES=C:\\Users\\SeuUsuario\\Documents,C:\\Users\\SeuUsuario\\Desktop
 
 # Linux/Mac
 ALLOWED_DIRECTORIES=/home/usuario/Documents,/home/usuario/Desktop
 
-# Servidor
+# Configurações do servidor
 DEBUG=false
 LOG_LEVEL=INFO
+
+# Google Calendar (opcional)
+# GOOGLE_CLIENT_ID=seu_client_id
+# GOOGLE_CLIENT_SECRET=seu_client_secret
 ```
 
 **⚠️ IMPORTANTE:** Use sempre caminhos absolutos!
+
+### 2. Claude Desktop
+
+O setup configura automaticamente, mas se necessário, edite manualmente:
+
+**Localização:**
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+**Conteúdo:**
+```json
+{
+  "mcpServers": {
+    "personal-server": {
+      "command": "python",
+      "args": ["C:\\caminho\\completo\\para\\main.py"],
+      "env": {
+        "PYTHONPATH": "C:\\caminho\\completo\\para\\projeto"
+      }
+    }
+  }
+}
+```
 
 ---
 
@@ -123,51 +132,115 @@ python main.py
 
 ### Usar no Claude Desktop
 
-1. **Reinicie o Claude Desktop** (importante!)
+1. **Reinicie o Claude Desktop** (feche completamente!)
 2. Abra uma nova conversa
-3. Digite seus comandos
+3. Digite comandos naturais
 
----
-
-## 💡 Exemplos de Uso
-
-### 📁 Arquivos
+**Exemplos de Comandos:**
 
 ```
-Liste os arquivos na minha pasta Documents
-Leia o arquivo README.md
-Crie arquivo teste.py com Hello World
-Procure arquivos .txt em Documents
-```
+📁 Arquivos:
+• Liste os arquivos na minha pasta Documents
+• Leia o arquivo README.md
+• Crie arquivo teste.py com código Hello World
+• Procure arquivos .txt em Documents recursivamente
 
-### ✅ Tarefas
+✅ Tarefas:
+• Crie tarefa: "Revisar documentação" com prioridade alta
+• Mostre minhas tarefas pendentes
+• Marque tarefa #3 como concluída
 
-```
-Crie tarefa: "Revisar docs" prioridade alta
-Mostre minhas tarefas pendentes
-Marque tarefa #3 como concluída
-```
-
-### 📅 Calendar
-
-```
-Crie evento "Reunião" amanhã às 14h
-Quais meus compromissos hoje?
+📅 Calendar (se configurado):
+• Crie evento "Reunião de equipe" amanhã às 14h
+• Quais são meus compromissos hoje?
 ```
 
 ---
 
 ## 🧪 Testes
 
+### Teste Rápido
 ```bash
-# Teste rápido
-python test_server.py
-
-# Testes unitários
-python -m pytest tests/ -v
+python -m tests.quick_test
 ```
 
-**📚 Documentação completa:** [TESTES.md](TESTES.md)
+### Testes Unitários
+```bash
+pytest tests/unit/ -v
+```
+
+### Testes de Integração
+```bash
+pytest tests/integration/ -v
+```
+
+### Todos os Testes com Coverage
+```bash
+pytest tests/ --cov=. --cov-report=html
+```
+
+**📚 Mais sobre testes:** Veja estrutura completa em `tests/`
+
+---
+
+## 🛠️ Desenvolvimento
+
+### Estrutura do Projeto
+
+```
+mcp-tools2/
+├── main.py              # Ponto de entrada
+├── setup.py             # Script de instalação
+├── dev.py               # Ferramentas de desenvolvimento
+│
+├── config/              # Configurações centralizadas
+│   ├── settings.py      # Settings com Pydantic
+│   └── logging.py       # Configuração de logs
+│
+├── core/                # Núcleo do servidor MCP
+│   ├── server.py        # Servidor principal
+│   ├── registry.py      # Registro de ferramentas
+│   └── security.py      # Validações de segurança
+│
+├── modules/             # Módulos funcionais (plugins)
+│   ├── base.py          # Classe base
+│   ├── filesystem/      # Sistema de arquivos
+│   ├── tasks/           # Gerenciamento de tarefas
+│   └── calendar/        # Google Calendar
+│
+├── utils/               # Utilitários compartilhados
+│
+└── tests/               # Testes centralizados
+    ├── quick_test.py    # Teste rápido
+    ├── unit/            # Testes unitários
+    └── integration/     # Testes de integração
+```
+
+### Ferramentas de Desenvolvimento
+
+```bash
+# Menu interativo
+python dev.py
+
+# Opções disponíveis:
+# 1. Testes rápidos
+# 2. Testes unitários
+# 3. Testes de integração
+# 4. Coverage
+# 5. Limpar projeto
+# 6. Instalar dependências
+# 7. Iniciar em modo debug
+# 8. Verificar código
+# 9. Verificar configuração
+```
+
+### Adicionar Novo Módulo
+
+1. Crie diretório em `modules/`
+2. Implemente classe herdando `BaseModule`
+3. Registre em `core/server.py`
+
+**📚 Guia Completo:** Veja [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ---
 
@@ -175,16 +248,16 @@ python -m pytest tests/ -v
 
 ### Claude não encontra o servidor
 
-1. Reinicie o Claude Desktop completamente
+1. Reinicie o Claude Desktop **completamente**
 2. Verifique `claude_desktop_config.json`
-3. Teste: `python main.py`
-4. Verifique logs: `logs/mcp_server.log`
+3. Teste manualmente: `python main.py`
+4. Consulte logs: `logs/mcp_server.log`
 
 ### Erro "Diretório não permitido"
 
-1. Verifique `ALLOWED_DIRECTORIES` em `.env`
+1. Verifique `ALLOWED_DIRECTORIES` no `.env`
 2. Use caminhos absolutos
-3. Verifique que o diretório existe
+3. Certifique-se que os diretórios existem
 
 ### Erro de importação
 
@@ -192,97 +265,91 @@ python -m pytest tests/ -v
 pip install -r requirements.txt --force-reinstall
 ```
 
-**📚 Troubleshooting completo:** [GUIA_COMPLETO.md](GUIA_COMPLETO.md)
+### Logs detalhados
 
----
+```bash
+# Ative no .env
+DEBUG=true
+LOG_LEVEL=DEBUG
 
-## 📊 Estrutura do Projeto
+# Ver logs em tempo real
+# Windows PowerShell:
+Get-Content logs\mcp_server.log -Wait
 
-```
-mcp-tools2/
-├── main.py              # Entrada do servidor
-├── setup.py             # Setup automatizado
-├── test_server.py       # Teste rápido
-│
-├── config/              # Configurações
-├── core/                # Núcleo do servidor
-├── modules/             # Módulos funcionais
-│   ├── filesystem/      # Sistema de arquivos
-│   ├── tasks/           # Tarefas e notas
-│   └── calendar/        # Google Calendar
-│
-├── tests/               # Testes unitários
-├── logs/                # Arquivos de log
-└── data/                # Dados (tarefas, etc)
+# Linux/Mac:
+tail -f logs/mcp_server.log
 ```
 
 ---
 
 ## 📚 Documentação
 
-- **[README.md](README.md)** - Visão geral (este arquivo)
-- **[GUIA_COMPLETO.md](GUIA_COMPLETO.md)** - Guia detalhado
-- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Referência rápida
-- **[TESTES.md](TESTES.md)** - Guia de testes
+### Documentos Principais
 
----
+| Documento | Descrição |
+|-----------|-----------|
+| **[README.md](README.md)** | Este arquivo - Visão geral completa |
+| **[QUICKSTART.md](QUICKSTART.md)** | Guia de início rápido (3 minutos) |
+| **[CONTRIBUTING.md](CONTRIBUTING.md)** | Guia de desenvolvimento |
+| **[CHANGELOG.md](CHANGELOG.md)** | Histórico de mudanças |
+| **[REFACTOR_SUMMARY.md](REFACTOR_SUMMARY.md)** | Resumo da refatoração |
 
-## 🛠️ Desenvolvimento
+### Scripts Úteis
 
-### Adicionar Novo Módulo
-
-1. Crie diretório em `modules/`
-2. Implemente classe herdando `BaseModule`
-3. Registre no `server.py`
-
-```python
-# modules/meu_modulo/tools.py
-from modules.base import BaseModule
-
-class MeuModuloTools(BaseModule):
-    async def is_available(self) -> bool:
-        return True
-    
-    async def initialize(self):
-        self.initialized = True
-    
-    def get_tools(self):
-        return {
-            "minha_ferramenta": self.minha_ferramenta
-        }
-    
-    async def minha_ferramenta(self, param: str) -> str:
-        """Descrição da ferramenta."""
-        return f"Resultado: {param}"
-```
+| Script | Descrição |
+|--------|-----------|
+| `python dev.py` | Menu interativo de desenvolvimento |
+| `python -m tests.quick_test` | Teste rápido de validação |
+| `python clean_project.py` | Remove arquivos desnecessários |
+| `python show_improvements.py` | Mostra melhorias implementadas |
+| `COMANDOS_PRONTOS.bat` | Menu Windows interativo |
 
 ---
 
 ## 🔒 Segurança
 
-- ✅ Validação de paths (sem `../`)
-- ✅ Allowlist de diretórios
-- ✅ Limite de tamanho de arquivo
-- ✅ Timeout de operações
-- ✅ Logging de todas operações
-- ✅ Sanitização de nomes
+O servidor implementa múltiplas camadas de segurança:
+
+- ✅ **Validação de Caminhos**: Proteção contra path traversal
+- ✅ **Allowlist**: Apenas diretórios configurados são acessíveis
+- ✅ **Sanitização**: Nomes de arquivos são sanitizados
+- ✅ **Limites**: Tamanho máximo de arquivo (10MB configurável)
+- ✅ **Timeout**: Operações têm timeout (30s configurável)
+- ✅ **Logging**: Todas as operações são registradas
+
+**💡 Dica:** Configure apenas os diretórios necessários em `ALLOWED_DIRECTORIES`.
 
 ---
 
-## 📈 Roadmap
+## 📊 Comandos Úteis
 
-- [ ] Interface web para configuração
-- [ ] Integração com mais APIs (Gmail, Notion)
-- [ ] Sistema de plugins
-- [ ] Sincronização multi-dispositivo
-- [ ] Backup automático
+```bash
+# Iniciar servidor
+python main.py
+start.bat              # Windows
+./start.sh             # Linux/Mac
+
+# Testes
+python -m tests.quick_test          # Rápido
+pytest tests/ -v                    # Completo
+pytest tests/ --cov=.               # Com coverage
+
+# Desenvolvimento
+python dev.py                       # Menu interativo
+python clean_project.py             # Limpar arquivos antigos
+
+# Windows
+COMANDOS_PRONTOS.bat                # Menu Windows
+```
 
 ---
 
-## 🤝 Contribuição
+## 🆘 Suporte
 
-Este é um projeto pessoal desenvolvido para uso com Claude Desktop.  
-Sugestões e feedback são bem-vindos!
+- 📖 **Documentação:** Veja arquivos `.md` na raiz
+- 📊 **Logs:** `./logs/mcp_server.log`
+- 🐛 **Debug:** `DEBUG=true python main.py`
+- 📝 **Checklist:** [POST_REFACTOR_CHECKLIST.md](POST_REFACTOR_CHECKLIST.md)
 
 ---
 
@@ -292,18 +359,18 @@ MIT License - Use como desejar!
 
 ---
 
-## 🆘 Suporte
+## 🎉 Agradecimentos
 
-- 📖 Documentação: Veja os arquivos `.md`
-- 📊 Logs: `./logs/mcp_server.log`
-- 🐛 Debug: `DEBUG=true python main.py`
+Desenvolvido com ❤️ usando:
+- [Model Context Protocol](https://modelcontextprotocol.io)
+- [Claude](https://claude.ai) by Anthropic
+- [Pydantic](https://docs.pydantic.dev)
+- [FastMCP](https://github.com/jlowin/fastmcp)
 
 ---
 
 <div align="center">
 
-**Desenvolvido com ❤️ usando Model Context Protocol**
-
-[🏠 Home](#-mcp-server-pessoal-v100) • [📖 Docs](GUIA_COMPLETO.md) • [⚡ Quick Ref](QUICK_REFERENCE.md) • [🧪 Tests](TESTES.md)
+**[🏠 Início](#-mcp-server-pessoal-v100)** • **[⚡ Quick Start](QUICKSTART.md)** • **[📖 Contribuir](CONTRIBUTING.md)** • **[📝 Changelog](CHANGELOG.md)**
 
 </div>

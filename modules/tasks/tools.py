@@ -257,7 +257,7 @@ class TasksTools(BaseModule):
             title = validate_string(title, max_length=200)
             content = validate_string(content, max_length=5000)
 
-            tag_list = [tag.strip() for tag in tags.split(',') if tags else []]
+            tag_list = [tag.strip() for tag in tags.split(',')] if tags else []
             note_id = len(self.notes) + 1
 
             note = {

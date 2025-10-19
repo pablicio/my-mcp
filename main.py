@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-🚀 MCP Server Pessoal v1.0.0
+MCP Server Pessoal v1.0.0
 Servidor extensível baseado no Model Context Protocol para uso pessoal.
 """
 
-import asyncio
 import logging
 import sys
 from pathlib import Path
@@ -17,41 +17,39 @@ try:
     from config.settings import settings
     from config.logging import setup_logging
 except ImportError as e:
-    print(f"❌ Erro de importação: {e}")
-    print("💡 Execute o setup primeiro: python setup.py")
+    print(f"ERRO de importacao: {e}")
+    print("Execute o setup primeiro: python setup.py")
     sys.exit(1)
 
-async def main():
+def main():
     """Função principal para iniciar o servidor MCP."""
+    # Configurar logging para arquivo, não para stdout
+    # (stdout é usado para comunicação MCP)
     setup_logging()
     logger = logging.getLogger(__name__)
 
     logger.info("="*60)
-    logger.info("🚀 MCP SERVER PESSOAL v1.0.0")
+    logger.info("MCP SERVER PESSOAL v1.0.0")
     logger.info("="*60)
-    logger.info(f"🌐 Host: {settings.HOST}:{settings.PORT}")
-    logger.info(f"🐛 Debug: {'Enabled' if settings.DEBUG else 'Disabled'}")
+    logger.info(f"Debug: {'Enabled' if settings.DEBUG else 'Disabled'}")
+    logger.info(f"Diretorios permitidos: {len(settings.get_allowed_directories())}")
 
     try:
         server = MCPPersonalServer()
-        await server.initialize()
-
-        logger.info("✅ Servidor MCP inicializado com sucesso!")
-        logger.info("🔧 Para parar: Ctrl+C")
-        logger.info("📊 Logs: ./logs/mcp_server.log")
-
-        await server.run()
-
+        
+        logger.info("Inicializando servidor...")
+        server.run_sync()
+        
     except KeyboardInterrupt:
-        logger.info("⏹️ Servidor interrompido pelo usuário")
+        logger.info("Servidor interrompido pelo usuario")
     except Exception as e:
-        logger.error(f"❌ Erro: {e}")
+        logger.error(f"Erro: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
-    finally:
-        logger.info("🛑 Servidor finalizado")
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        main()
     except KeyboardInterrupt:
-        print("\n👋 Servidor interrompido")
+        print("\nServidor interrompido", file=sys.stderr)
