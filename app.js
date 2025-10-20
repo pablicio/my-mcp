@@ -259,6 +259,13 @@ function renderEvents(events) {
 
 function renderDashboardEvents(events) {
     const container = document.getElementById('dashboardEvents');
+    
+    // Verificação de segurança
+    if (!container) {
+        console.warn('Elemento dashboardEvents não encontrado no DOM');
+        return;
+    }
+    
     const upcoming = events.slice(0, 3);
     
     if (upcoming.length === 0) {

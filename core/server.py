@@ -76,21 +76,25 @@ class MCPPersonalServer:
         for tool_name, tool_func in self.registry.tools.items():
             # Criar wrapper para monitoramento com closure correto
             def create_monitored_wrapper(name, func):
-                async def monitored_tool(*args, **kwargs):
+                # Preservar a assinatura original da função
+                import inspect
+                sig = inspect.signature(func)
+                
+                async def monitored_tool(**kwargs):
                     # Registrar atividade do cliente atual
                     self.connection_monitor.record_activity(
                         client_id=self.current_client_id,
                         tool_name=name
                     )
-                    self.logger.info(f"Ferramenta '{name}' chamada por {self.current_client_id}")
-                    # Executar ferramenta original
-                    return await func(*args, **kwargs)
+                    self.logger.info(f"Ferramenta '{name}' chamada por {self.current_client_id} com: {kwargs}")
+                    # Executar ferramenta original com os parâmetros corretos
+                    return await func(**kwargs)
                 
                 # Preservar metadados da função original
                 monitored_tool.__name__ = func.__name__
                 monitored_tool.__doc__ = func.__doc__
-                if hasattr(func, '__annotations__'):
-                    monitored_tool.__annotations__ = func.__annotations__
+                monitored_tool.__annotations__ = func.__annotations__
+                monitored_tool.__signature__ = sig
                     
                 return monitored_tool
             
